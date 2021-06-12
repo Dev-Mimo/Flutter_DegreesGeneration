@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -6,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 
-import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
@@ -32,8 +30,6 @@ void main() {
 class MyApp extends StatelessWidget {
   Future<void> toggleFullScreen() async {
     await DesktopWindow.toggleFullScreen();
-    bool isFullScreen = await DesktopWindow.getFullScreen();
-
     await DesktopWindow.setFullScreen(true);
   }
 
@@ -101,8 +97,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<void> createRequiredFolders() async {
     final dataDir = Directory.current.path;
-    final Directory dataDirFolder = Directory("${dataDir}\\data\\");
-    final File myFile = File("${dataDir}\\data\\template.docx");
+    final Directory dataDirFolder = Directory("$dataDir\\data\\");
+    final File myFile = File("$dataDir\\data\\template.docx");
 
     final Directory appDocDir = await getApplicationDocumentsDirectory();
     final Directory appDocDirFolder = Directory("${appDocDir.path}\\MNSUET Degrees\\");
@@ -162,10 +158,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
     c
       ..add(TextContent("year", "${dt.year}"))
-      ..add(TextContent("CGPA", "${_formKey.currentState?.fields['CGPA']?.value}"))..add(
-        TextContent(
-            "degree_level2", "${_formKey.currentState?.fields['degree_level']?.value}"))..add(
-        TextContent("degree_title", "${_formKey.currentState?.fields['degree_title']?.value}"));
+      ..add(TextContent("CGPA", "${_formKey.currentState?.fields['CGPA']?.value}"))
+      ..add(TextContent("degree_level2", "${_formKey.currentState?.fields['degree_level']?.value}"))
+      ..add(TextContent("degree_title", "${_formKey.currentState?.fields['degree_title']?.value}"));
 
     if (_formKey.currentState?.fields['honors']?.value == true) {
       c..add(TextContent("honours", "with Honors"));
@@ -175,19 +170,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
     final d = await docx.generate(c);
     final of = File(
-        "${appDocDir.path}\\MNSUET Degrees\\Generated\\degree${context
-            .read(fileCounterProvider)
-            .state}.docx");
+        "${appDocDir.path}\\MNSUET Degrees\\Generated\\degree${context.read(fileCounterProvider).state}.docx");
     // final of = File('C:\\generated${context.read(fileCounterProvider).state}.docx');
 
     if (d != null) {
       await of.writeAsBytes(d);
-      context
-          .read(fileCounterProvider)
-          .state++;
-      await persistFileCounter(context
-          .read(fileCounterProvider)
-          .state);
+      context.read(fileCounterProvider).state++;
+      await persistFileCounter(context.read(fileCounterProvider).state);
     }
   }
 
@@ -347,12 +336,30 @@ class _MyHomePageState extends State<MyHomePage> {
                           SizedBox(
                             height: MediaQuery.of(context).size.height * 0.01,
                           ),
-                          ElevatedButton(
-                            onPressed: () async {
-                              saveFileToDisk();
-                              print(await readFileCounter());
-                            },
-                            child: Text("Submit"),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              ElevatedButton(
+                                onPressed: () async {
+                                  saveFileToDisk();
+                                  print(await readFileCounter());
+                                },
+                                child: Text("Submit"),
+                              ),
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.01,
+                              ),
+                              ElevatedButton(
+                                onPressed: () {
+                                  _formKey.currentState!.reset();
+                                  FocusScope.of(context).unfocus();
+                                },
+                                child: Text("Reset"),
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.01,
                           ),
                         ],
                       ),
@@ -360,6 +367,31 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ),
               ),
+              Container(
+                  height: MediaQuery.of(context).size.height * 0.07,
+                  decoration: BoxDecoration(
+                    color: Color.fromRGBO(38, 40, 149, 1),
+                    borderRadius: new BorderRadius.only(
+                      topLeft: Radius.circular(50.0),
+                      topRight: Radius.circular(50.0),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Created by:",
+                        style: TextStyle(
+                          fontSize: MediaQuery.of(context).size.width * 0.012,
+                          color: Colors.white,
+                        ),
+                      ),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.01,
+                      ),
+                      Image.asset('images/Logo_Name_JTech.png'),
+                    ],
+                  )),
             ],
           ),
         ),
