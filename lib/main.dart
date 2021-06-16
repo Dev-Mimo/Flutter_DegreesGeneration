@@ -77,6 +77,8 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final _formKey = GlobalKey<FormBuilderState>();
+  var degreeOptions = ['B.Sc.', 'B.S.', 'M.Sc.'];
+  var genderOptions = ['Male', 'Female'];
 
   @override
   void initState() {
@@ -89,7 +91,10 @@ class _MyHomePageState extends State<MyHomePage> {
     fileCounter = await readFileCounter();
   }
 
-  Future<void> dateChanged(DateTime? dt) async {}
+  Future<void> dateChanged(DateTime? dt) async {
+    var k = _formKey.currentState?.fields['gender']?.value;
+    print(k);
+  }
 
   Future<void> createRequiredFolders() async {
     final dataDir = Directory.current.path;
@@ -114,7 +119,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }
 
     final Directory generatedDirFolder =
-    Directory("${appDocDir.path}\\MNSUET Degrees\\Generated\\");
+        Directory("${appDocDir.path}\\MNSUET Degrees\\Generated\\");
 
     if (await generatedDirFolder.exists()) {
       print("${generatedDirFolder.path} exists!");
@@ -134,8 +139,18 @@ class _MyHomePageState extends State<MyHomePage> {
     Content c = Content();
     DateTime? dt = _formKey.currentState?.fields['date']?.value;
 
-    c..add(TextContent("roll", "${_formKey.currentState?.fields['roll']?.value}"))..add(
-        TextContent("name", "${_formKey.currentState?.fields['name']?.value}"))..add(TextContent("father_name", "${_formKey.currentState?.fields['father_name']?.value}"))..add(TextContent("degree_level", "${_formKey.currentState?.fields['degree_level']?.value}"))..add(TextContent("department", "${_formKey.currentState?.fields['department']?.value}"));
+    c..add(TextContent("roll", "${_formKey.currentState?.fields['roll']?.value}"));
+
+    if (_formKey.currentState?.fields['gender']?.value == 'Male') {
+      c..add(TextContent("gender", "Mr."))..add(TextContent("gender2", "Son"));
+    } else if (_formKey.currentState?.fields['gender']?.value == 'Female') {
+      c..add(TextContent("gender", "Mrs."))..add(TextContent("gender2", "Daughter"));
+    }
+    c
+      ..add(TextContent("name", "${_formKey.currentState?.fields['name']?.value}"))
+      ..add(TextContent("father_name", "${_formKey.currentState?.fields['father_name']?.value}"))
+      ..add(TextContent("degree_level", "${_formKey.currentState?.fields['d_level']?.value}"))
+      ..add(TextContent("department", "${_formKey.currentState?.fields['department']?.value}"));
 
     if (dt!.day < 10) {
       c..add(TextContent("day", "0${dt.day}th"));
@@ -278,9 +293,15 @@ class _MyHomePageState extends State<MyHomePage> {
       c..add(TextContent("fourthDigit", "Zero"));
     }
 
-    c
-      ..add(TextContent("degree_level2", "${_formKey.currentState?.fields['degree_level']?.value}"))
-      ..add(TextContent("degree_title", "${_formKey.currentState?.fields['degree_title']?.value}"));
+    c..add(TextContent("degree_level2", "${_formKey.currentState?.fields['d_level']?.value}"));
+    if (_formKey.currentState?.fields['d_level']?.value == 'B.Sc.') {
+      c..add(TextContent("degree_level2", "Bachelor of Science"));
+    } else if (_formKey.currentState?.fields['d_level']?.value == 'B.S.') {
+      c..add(TextContent("degree_level2", "Bachelor of Science"));
+    } else if (_formKey.currentState?.fields['d_level']?.value == 'M.Sc.') {
+      c..add(TextContent("degree_level2", "Master of Science"));
+    }
+    // ..add(TextContent("degree_title", "${_formKey.currentState?.fields['d_level']?.value}"));
 
     if (_formKey.currentState?.fields['honors']?.value == true) {
       c..add(TextContent("honours", "with Honors"));
@@ -345,6 +366,35 @@ class _MyHomePageState extends State<MyHomePage> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
+                        Align(
+                          alignment: Alignment.topLeft,
+                          child: Container(
+                            width: MediaQuery.of(context).size.width * 0.1,
+                            child: FormBuilderDropdown(
+                              name: 'gender',
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(20.0),
+                                ),
+                                labelText: 'Gender',
+                              ),
+                              // initialValue: 'Male',
+                              allowClear: true,
+                              hint: Text('Select Gender'),
+                              validator: FormBuilderValidators.compose(
+                                  [FormBuilderValidators.required(context)]),
+                              items: genderOptions
+                                  .map((gender) => DropdownMenuItem(
+                                        value: gender,
+                                        child: Text('$gender'),
+                                      ))
+                                  .toList(),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.004,
+                        ),
                         FormBuilderTextField(
                           name: 'name',
                           decoration: InputDecoration(
@@ -371,19 +421,19 @@ class _MyHomePageState extends State<MyHomePage> {
                         SizedBox(
                           height: MediaQuery.of(context).size.height * 0.004,
                         ),
-                        FormBuilderTextField(
-                          name: 'degree_level',
-                          decoration: InputDecoration(
-                            labelText: 'Degree Level',
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(20.0),
-                            ),
-                            labelStyle: TextStyle(),
-                          ),
-                        ),
-                        SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.004,
-                        ),
+                        // FormBuilderTextField(
+                        //   name: 'degree_title',
+                        //   decoration: InputDecoration(
+                        //     labelText: 'Degree Title',
+                        //     border: OutlineInputBorder(
+                        //       borderRadius: BorderRadius.circular(20.0),
+                        //     ),
+                        //     labelStyle: TextStyle(),
+                        //   ),
+                        // ),
+                        // SizedBox(
+                        //   height: MediaQuery.of(context).size.height * 0.004,
+                        // ),
                         FormBuilderTextField(
                           name: 'roll',
                           decoration: InputDecoration(
@@ -411,19 +461,6 @@ class _MyHomePageState extends State<MyHomePage> {
                           height: MediaQuery.of(context).size.height * 0.004,
                         ),
                         FormBuilderTextField(
-                          name: 'degree_title',
-                          decoration: InputDecoration(
-                            labelText: 'Degree Title',
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(20.0),
-                            ),
-                            labelStyle: TextStyle(),
-                          ),
-                        ),
-                        SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.004,
-                        ),
-                        FormBuilderTextField(
                           name: 'CGPA',
                           decoration: InputDecoration(
                             labelText: 'CGPA',
@@ -434,6 +471,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           ),
                           validator: FormBuilderValidators.compose([
                             FormBuilderValidators.required(context),
+                            FormBuilderValidators.minLength(context, 5),
                             FormBuilderValidators.maxLength(context, 5)
                           ]),
                         ),
@@ -451,6 +489,35 @@ class _MyHomePageState extends State<MyHomePage> {
                               borderRadius: BorderRadius.circular(20.0),
                             ),
                             labelStyle: TextStyle(),
+                          ),
+                        ),
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.004,
+                        ),
+                        Align(
+                          alignment: Alignment.topLeft,
+                          child: Container(
+                            width: MediaQuery.of(context).size.width * 0.1,
+                            child: FormBuilderDropdown(
+                              name: 'd_level',
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(20.0),
+                                ),
+                                labelText: 'Degree Level',
+                              ),
+                              // initialValue: 'Male',
+                              allowClear: true,
+                              hint: Text('Select Degree Level'),
+                              validator: FormBuilderValidators.compose(
+                                  [FormBuilderValidators.required(context)]),
+                              items: degreeOptions
+                                  .map((gender) => DropdownMenuItem(
+                                        value: gender,
+                                        child: Text('$gender'),
+                                      ))
+                                  .toList(),
+                            ),
                           ),
                         ),
                         SizedBox(
