@@ -79,6 +79,9 @@ class _MyHomePageState extends State<MyHomePage> {
   final _formKey = GlobalKey<FormBuilderState>();
   var degreeOptions = ['B.Sc.', 'B.S.', 'M.Sc.'];
   var genderOptions = ['Male', 'Female'];
+  final successSnackBar =
+      SnackBar(content: Text('File saved in Documents\\MNSUET Degrees\\Generated'));
+  final failedSnackBar = SnackBar(content: Text('Failed. Please input all values!'));
 
   @override
   void initState() {
@@ -396,6 +399,19 @@ class _MyHomePageState extends State<MyHomePage> {
                           height: MediaQuery.of(context).size.height * 0.004,
                         ),
                         FormBuilderTextField(
+                          name: 'roll',
+                          decoration: InputDecoration(
+                            labelText: 'Roll Number',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                            labelStyle: TextStyle(),
+                          ),
+                        ),
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.004,
+                        ),
+                        FormBuilderTextField(
                           name: 'name',
                           decoration: InputDecoration(
                             labelText: 'Name',
@@ -412,32 +428,6 @@ class _MyHomePageState extends State<MyHomePage> {
                           name: 'father_name',
                           decoration: InputDecoration(
                             labelText: "Father's Name",
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(20.0),
-                            ),
-                            labelStyle: TextStyle(),
-                          ),
-                        ),
-                        SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.004,
-                        ),
-                        // FormBuilderTextField(
-                        //   name: 'degree_title',
-                        //   decoration: InputDecoration(
-                        //     labelText: 'Degree Title',
-                        //     border: OutlineInputBorder(
-                        //       borderRadius: BorderRadius.circular(20.0),
-                        //     ),
-                        //     labelStyle: TextStyle(),
-                        //   ),
-                        // ),
-                        // SizedBox(
-                        //   height: MediaQuery.of(context).size.height * 0.004,
-                        // ),
-                        FormBuilderTextField(
-                          name: 'roll',
-                          decoration: InputDecoration(
-                            labelText: 'Roll Number',
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(20.0),
                             ),
@@ -547,8 +537,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                 if (_formKey.currentState!.validate()) {
                                   saveFileToDisk();
                                   print(await readFileCounter());
+                                  ScaffoldMessenger.of(context).showSnackBar(successSnackBar);
                                 } else {
-                                  print("Validation failed!");
+                                  ScaffoldMessenger.of(context).showSnackBar(failedSnackBar);
                                 }
                               },
                               child: Text("Submit"),
