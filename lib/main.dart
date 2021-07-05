@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
 
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+// import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:provider/provider.dart';
 
 import 'package:intl/intl.dart';
 
@@ -10,6 +11,8 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'package:mnsuet_degrees/theme.dart';
 
 // ignore: implementation_imports
 import 'package:docx_template/src/template.dart';
@@ -23,12 +26,21 @@ import 'package:desktop_window/desktop_window.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(
-    ProviderScope(
-      child: MyApp(),
-    ),
-  );
+  // runApp(
+  //   ProviderScope(
+  //     child: MyApp(),
+  //   ),
+  // );
+  runApp(MultiProvider(
+    providers: [
+      ChangeNotifierProvider(create: (context) => RootState()),
+      ChangeNotifierProvider(create: (context) => ThemeNotifier())
+    ],
+    child: MyApp(),
+  ));
 }
+
+class RootState extends ChangeNotifier {}
 
 class MyApp extends StatelessWidget {
   Future<void> toggleFullScreen() async {
@@ -41,6 +53,7 @@ class MyApp extends StatelessWidget {
     toggleFullScreen();
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      theme: Provider.of<ThemeNotifier>(context).darkTheme ? darkTheme : lightTheme,
       home: AnimatedSplashScreen(
         duration: 1000,
         splash: "images/logo.png",
@@ -52,8 +65,8 @@ class MyApp extends StatelessWidget {
   }
 }
 
-int fileCounter = 0;
-StateProvider<int> fileCounterProvider = StateProvider((ref) => fileCounter);
+// int fileCounter = 0;
+// StateProvider<int> fileCounterProvider = StateProvider((ref) => fileCounter);
 
 Future<int> readFileCounter() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -85,14 +98,14 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
-    fileCounterAsync();
+    // fileCounterAsync();
     createRequiredFolders();
     super.initState();
   }
 
-  void fileCounterAsync() async {
-    fileCounter = await readFileCounter();
-  }
+  // void fileCounterAsync() async {
+  //   fileCounter = await readFileCounter();
+  // }
 
   Future<void> dateChanged(DateTime? dt) async {
     var k = _formKey.currentState?.fields['gender']?.value;
@@ -318,8 +331,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
     if (d != null) {
       await of.writeAsBytes(d);
-      context.read(fileCounterProvider).state++;
-      await persistFileCounter(context.read(fileCounterProvider).state);
+      // context.read(fileCounterProvider).state++;
+      // await persistFileCounter(context.read(fileCounterProvider).state);
     }
   }
 
@@ -369,31 +382,35 @@ class _MyHomePageState extends State<MyHomePage> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Align(
-                          alignment: Alignment.topLeft,
-                          child: Container(
-                            width: MediaQuery.of(context).size.width * 0.1,
-                            child: FormBuilderDropdown(
-                              name: 'gender',
-                              decoration: InputDecoration(
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(20.0),
+                        Row(
+                          children: [
+                            Align(
+                              alignment: Alignment.topLeft,
+                              child: Container(
+                                width: MediaQuery.of(context).size.width * 0.1,
+                                child: FormBuilderDropdown(
+                                  name: 'gender',
+                                  decoration: InputDecoration(
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(20.0),
+                                    ),
+                                    labelText: 'Gender',
+                                  ),
+                                  // initialValue: 'Male',
+                                  allowClear: true,
+                                  hint: Text('Select Gender'),
+                                  validator: FormBuilderValidators.compose(
+                                      [FormBuilderValidators.required(context)]),
+                                  items: genderOptions
+                                      .map((gender) => DropdownMenuItem(
+                                            value: gender,
+                                            child: Text('$gender'),
+                                          ))
+                                      .toList(),
                                 ),
-                                labelText: 'Gender',
                               ),
-                              // initialValue: 'Male',
-                              allowClear: true,
-                              hint: Text('Select Gender'),
-                              validator: FormBuilderValidators.compose(
-                                  [FormBuilderValidators.required(context)]),
-                              items: genderOptions
-                                  .map((gender) => DropdownMenuItem(
-                                        value: gender,
-                                        child: Text('$gender'),
-                                      ))
-                                  .toList(),
                             ),
-                          ),
+                          ],
                         ),
                         SizedBox(
                           height: MediaQuery.of(context).size.height * 0.004,
