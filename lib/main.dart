@@ -382,35 +382,37 @@ class _MyHomePageState extends State<MyHomePage> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Row(
-                          children: [
-                            Align(
-                              alignment: Alignment.topLeft,
-                              child: Container(
-                                width: MediaQuery.of(context).size.width * 0.1,
-                                child: FormBuilderDropdown(
-                                  name: 'gender',
-                                  decoration: InputDecoration(
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(20.0),
-                                    ),
-                                    labelText: 'Gender',
-                                  ),
-                                  // initialValue: 'Male',
-                                  allowClear: true,
-                                  hint: Text('Select Gender'),
-                                  validator: FormBuilderValidators.compose(
-                                      [FormBuilderValidators.required(context)]),
-                                  items: genderOptions
-                                      .map((gender) => DropdownMenuItem(
-                                            value: gender,
-                                            child: Text('$gender'),
-                                          ))
-                                      .toList(),
+                        SwitchListTile(
+                          onChanged: (val) {
+                            Provider.of<ThemeNotifier>(context, listen: false).toggleTheme();
+                          },
+                          value: Provider.of<ThemeNotifier>(context).darkTheme,
+                        ),
+                        Align(
+                          alignment: Alignment.topLeft,
+                          child: Container(
+                            width: MediaQuery.of(context).size.width * 0.1,
+                            child: FormBuilderDropdown(
+                              name: 'gender',
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(20.0),
                                 ),
+                                labelText: 'Gender',
                               ),
+                              // initialValue: 'Male',
+                              allowClear: true,
+                              hint: Text('Select Gender'),
+                              validator: FormBuilderValidators.compose(
+                                  [FormBuilderValidators.required(context)]),
+                              items: genderOptions
+                                  .map((gender) => DropdownMenuItem(
+                                        value: gender,
+                                        child: Text('$gender'),
+                                      ))
+                                  .toList(),
                             ),
-                          ],
+                          ),
                         ),
                         SizedBox(
                           height: MediaQuery.of(context).size.height * 0.004,
