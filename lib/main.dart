@@ -160,7 +160,7 @@ class _MyHomePageState extends State<MyHomePage> {
     if (_formKey.currentState?.fields['gender']?.value == 'Male') {
       c..add(TextContent("gender", "Mr."))..add(TextContent("gender2", "Son"));
     } else if (_formKey.currentState?.fields['gender']?.value == 'Female') {
-      c..add(TextContent("gender", "Mrs."))..add(TextContent("gender2", "Daughter"));
+      c..add(TextContent("gender", "Ms."))..add(TextContent("gender2", "Daughter"))..add(TextContent("he_she", "She"));
     }
     c
       ..add(TextContent("name", "${_formKey.currentState?.fields['name']?.value}"))
@@ -345,6 +345,7 @@ class _MyHomePageState extends State<MyHomePage> {
             Container(
               // rgb(38, 40, 149)
               height: MediaQuery.of(context).size.height * 0.08,
+              // height: 50,
               decoration: BoxDecoration(
                 color: Color.fromRGBO(38, 40, 149, 1),
                 borderRadius: new BorderRadius.only(
@@ -363,6 +364,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     "Muhammad Nawaz Sharif \nUniversity of Engineering\n & Technology, Multan",
                     style: TextStyle(
                       fontSize: MediaQuery.of(context).size.width * 0.010,
+                      // fontSize: 14,
                       color: Colors.white,
                     ),
                   ),
@@ -403,8 +405,8 @@ class _MyHomePageState extends State<MyHomePage> {
                               // initialValue: 'Male',
                               allowClear: true,
                               hint: Text('Select Gender'),
-                              validator: FormBuilderValidators.compose(
-                                  [FormBuilderValidators.required(context)]),
+                              // validator: FormBuilderValidators.compose(
+                              //     [FormBuilderValidators.required(context)]),
                               items: genderOptions
                                   .map((gender) => DropdownMenuItem(
                                         value: gender,
@@ -518,8 +520,8 @@ class _MyHomePageState extends State<MyHomePage> {
                               // initialValue: 'Male',
                               allowClear: true,
                               hint: Text('Select Degree Level'),
-                              validator: FormBuilderValidators.compose(
-                                  [FormBuilderValidators.required(context)]),
+                              // validator: FormBuilderValidators.compose(
+                              //     [FormBuilderValidators.required(context)]),
                               items: degreeOptions
                                   .map((gender) => DropdownMenuItem(
                                         value: gender,
